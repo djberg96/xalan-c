@@ -1004,7 +1004,7 @@ if(transcoder STREQUAL "icu")
 endif()
 target_link_libraries(xalan-c XercesC::XercesC Threads::Threads)
 if(msgloader STREQUAL "inmemory")
-target_link_libraries(xalan-c XalanC::XalanMsg)
+target_link_libraries(xalan-c xalanMsg)
 endif()
 
 add_library(XalanC::XalanC ALIAS xalan-c)
