@@ -20,3 +20,4 @@ src/xalanc/Utils/MsgCreator/MsgCreator
 src/xalanc/XalanCConfig.cmake
 src/xalanc/XalanCConfigVersion.cmake
 *.out
+build/
