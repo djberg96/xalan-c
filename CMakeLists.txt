@@ -125,3 +125,24 @@ message(STATUS "  Thread implementation:       ${thread}")
 message(STATUS "  Transcoder:                  ${transcoder}")
 message(STATUS "  Message Loader:              ${msgloader}")
 message(STATUS "  Message Loader Locale:       ${message-locale}")
+
+# CPack configuration
+set(CPACK_PACKAGE_NAME "xalan-c")
+set(CPACK_PACKAGE_VENDOR "Apache Software Foundation")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Apache Xalan-C++ XSLT Library")
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+set(CPACK_GENERATOR "TGZ;ZIP")
+set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
+set(CPACK_SOURCE_IGNORE_FILES
+    "/\\\\.git/"
+    "/\\\\.github/"
+    "/build/"
+    "\\\\.DS_Store"
+)
+include(CPack)
+
