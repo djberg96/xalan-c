@@ -60,7 +60,10 @@ jobs:
     - name: Build
       run: |
         cd build
-        cmake --build . --config ${{ matrix.config.config }} --target xalanMsg
+        cmake --build . --config ${{ matrix.config.config }} --target xalanMsg --verbose
+        echo "Checking for xalanMsg library files:"
+        Get-ChildItem -Recurse -Filter "XalanMsgLib*.lib" | Select-Object FullName
+        Get-ChildItem -Recurse -Filter "XalanMessages*.dll" | Select-Object FullName
         cmake --build . --config ${{ matrix.config.config }}
       shell: pwsh
 
