@@ -59,7 +59,7 @@ jobs:
     - name: Build
       run: |
         cd build
-        cmake --build . --config ${{ matrix.config.config }} --parallel
+        cmake --build . --config ${{ matrix.config.config }}
       shell: pwsh
 
     - name: Test
