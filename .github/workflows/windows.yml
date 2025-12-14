@@ -1,0 +1,89 @@
+name: Windows CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    name: ${{ matrix.config.name }}
+    runs-on: windows-2019
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - name: "Windows MSVC 2019 - Release - Shared"
+            generator: "Visual Studio 16 2019"
+            arch: "x64"
+            config: Release
+            shared: ON
+
+          - name: "Windows MSVC 2019 - Debug - Static"
+            generator: "Visual Studio 16 2019"
+            arch: "x64"
+            config: Debug
+            shared: OFF
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 5
+
+    - name: Setup vcpkg
+      uses: lukka/run-vcpkg@v11
+      with:
+        vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+        vcpkgGitCommitId: 'master'
+
+    - name: Install Xerces-C
+      run: |
+        vcpkg install xerces-c:x64-windows
+      shell: pwsh
+
+    - name: Configure CMake
+      run: |
+        mkdir build
+        cd build
+        cmake -G "${{ matrix.config.generator }}" -A ${{ matrix.config.arch }} `
+          -DCMAKE_BUILD_TYPE=${{ matrix.config.config }} `
+          -DBUILD_SHARED_LIBS:BOOL=${{ matrix.config.shared }} `
+          -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" `
+          ..
+      shell: pwsh
+
+    - name: Build
+      run: |
+        cd build
+        cmake --build . --config ${{ matrix.config.config }} --parallel
+      shell: pwsh
+
+    - name: Install
+      run: |
+        cd build
+        cmake --build . --config ${{ matrix.config.config }} --target install
+      shell: pwsh
+
+    - name: Test
+      run: |
+        cd build
+        ctest -V -C ${{ matrix.config.config }}
+      shell: pwsh
+
+    - name: Package
+      if: matrix.config.config == 'Release'
+      run: |
+        cd "C:/Program Files (x86)/xalan-c"
+        7z a ${{ github.workspace }}/xalan-c-${{ matrix.config.arch }}.zip *
+      shell: pwsh
+
+    - name: Upload Artifacts
+      if: matrix.config.config == 'Release'
+      uses: actions/upload-artifact@v4
+      with:
+        name: xalan-c-windows-${{ matrix.config.arch }}-${{ matrix.config.config }}
+        path: xalan-c-${{ matrix.config.arch }}.zip
