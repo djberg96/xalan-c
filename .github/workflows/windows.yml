@@ -53,6 +53,7 @@ jobs:
           -DCMAKE_CONFIGURATION_TYPES="${{ matrix.config.config }}" `
           -DBUILD_SHARED_LIBS:BOOL=${{ matrix.config.shared }} `
           -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" `
+          -DCMAKE_VERBOSE_MAKEFILE=ON `
           ..
       shell: pwsh
 
