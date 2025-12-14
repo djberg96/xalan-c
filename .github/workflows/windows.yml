@@ -16,11 +16,11 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - name: "Windows MSVC 2019 - Release - Shared"
+          - name: "Windows MSVC 2019 - Release - Static"
             generator: "Visual Studio 16 2019"
             arch: "x64"
             config: Release
-            shared: ON
+            shared: OFF
 
           - name: "Windows MSVC 2019 - Debug - Static"
             generator: "Visual Studio 16 2019"
@@ -35,14 +35,14 @@ jobs:
         fetch-depth: 5
 
     - name: Setup vcpkg
-      uses: lukka/run-vcpkg@v11
-      with:
-        vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-        vcpkgGitCommitId: 'master'
+      run: |
+        git clone https://github.com/microsoft/vcpkg.git
+        .\vcpkg\bootstrap-vcpkg.bat
+      shell: pwsh
 
     - name: Install Xerces-C
       run: |
-        vcpkg install xerces-c:x64-windows
+        .\vcpkg\vcpkg install xerces-c:x64-windows
       shell: pwsh
 
     - name: Configure CMake
@@ -50,22 +50,21 @@ jobs:
         mkdir build
         cd build
         cmake -G "${{ matrix.config.generator }}" -A ${{ matrix.config.arch }} `
-          -DCMAKE_BUILD_TYPE=${{ matrix.config.config }} `
+          -DCMAKE_CONFIGURATION_TYPES="${{ matrix.config.config }}" `
           -DBUILD_SHARED_LIBS:BOOL=${{ matrix.config.shared }} `
-          -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" `
+          -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" `
+          -DCMAKE_VERBOSE_MAKEFILE=ON `
           ..
       shell: pwsh
 
     - name: Build
       run: |
         cd build
-        cmake --build . --config ${{ matrix.config.config }} --parallel
-      shell: pwsh
-
-    - name: Install
-      run: |
-        cd build
-        cmake --build . --config ${{ matrix.config.config }} --target install
+        cmake --build . --config ${{ matrix.config.config }} --target xalanMsg --verbose
+        echo "Checking for xalanMsg library files:"
+        Get-ChildItem -Recurse -Filter "XalanMsgLib*.lib" | Select-Object FullName
+        Get-ChildItem -Recurse -Filter "XalanMessages*.dll" | Select-Object FullName
+        cmake --build . --config ${{ matrix.config.config }}
       shell: pwsh
 
     - name: Test
@@ -77,8 +76,8 @@ jobs:
     - name: Package
       if: matrix.config.config == 'Release'
       run: |
-        cd "C:/Program Files (x86)/xalan-c"
-        7z a ${{ github.workspace }}/xalan-c-${{ matrix.config.arch }}.zip *
+        cd build
+        cpack -G ZIP -C ${{ matrix.config.config }}
       shell: pwsh
 
     - name: Upload Artifacts
@@ -86,4 +85,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: xalan-c-windows-${{ matrix.config.arch }}-${{ matrix.config.config }}
-        path: xalan-c-${{ matrix.config.arch }}.zip
+        path: build/*.zip

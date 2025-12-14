@@ -50,11 +50,6 @@ jobs:
         cd build
         cmake --build . --parallel
 
-    - name: Install
-      run: |
-        cd build
-        sudo cmake --build . --target install
-
     - name: Test
       run: |
         cd build
