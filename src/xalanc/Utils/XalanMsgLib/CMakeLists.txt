@@ -53,14 +53,6 @@ if(msgloader STREQUAL "inmemory")
     set_target_properties(xalanMsg PROPERTIES OUTPUT_NAME "XalanMsgLib_${XALAN_MS_LIB_MAJOR_VER}")
     set_target_properties(xalanMsg PROPERTIES RUNTIME_OUTPUT_NAME "XalanMessages_${XALAN_MS_LIB_MAJOR_VER}_${XALAN_MS_LIB_MINOR_VER}")
     set_target_properties(xalanMsg PROPERTIES DEBUG_POSTFIX "D")
-    # Ensure import library is in the same location as the main xalan-c library for multi-config generators
-    foreach(config_type ${CMAKE_CONFIGURATION_TYPES})
-      string(TOUPPER ${config_type} config_upper)
-      set_target_properties(xalanMsg PROPERTIES
-        ARCHIVE_OUTPUT_DIRECTORY_${config_upper} "${CMAKE_BINARY_DIR}/src/xalanc/${config_type}"
-        LIBRARY_OUTPUT_DIRECTORY_${config_upper} "${CMAKE_BINARY_DIR}/src/xalanc/${config_type}"
-        RUNTIME_OUTPUT_DIRECTORY_${config_upper} "${CMAKE_BINARY_DIR}/src/xalanc/${config_type}")
-    endforeach()
   else()
     # Not used for the common cases, though this would be the default if
     # not for libtool compatibility.
