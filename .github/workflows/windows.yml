@@ -59,6 +59,7 @@ jobs:
     - name: Build
       run: |
         cd build
+        cmake --build . --config ${{ matrix.config.config }} --target xalanMsg
         cmake --build . --config ${{ matrix.config.config }}
       shell: pwsh
 
