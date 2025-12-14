@@ -35,24 +35,22 @@ jobs:
         fetch-depth: 5
 
     - name: Setup vcpkg
-      uses: lukka/run-vcpkg@v11
-      with:
-        vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-        vcpkgGitCommitId: 'master'
+      run: |
+        git clone https://github.com/microsoft/vcpkg.git
+        .\vcpkg\bootstrap-vcpkg.bat
+      shell: pwsh
 
     - name: Install Xerces-C
       run: |
-        vcpkg install xerces-c:x64-windows
-      shell: pwsh
-
-    - name: Configure CMake
+        .\vcpkg\vcpkg install xerces-c:x64-windows
+      shell: pwsh    - name: Configure CMake
       run: |
         mkdir build
         cd build
         cmake -G "${{ matrix.config.generator }}" -A ${{ matrix.config.arch }} `
           -DCMAKE_BUILD_TYPE=${{ matrix.config.config }} `
           -DBUILD_SHARED_LIBS:BOOL=${{ matrix.config.shared }} `
-          -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" `
+          -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" `
           ..
       shell: pwsh
 
