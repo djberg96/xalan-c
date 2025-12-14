@@ -34,8 +34,6 @@ if(msgloader STREQUAL "inmemory")
   target_compile_definitions(xalanMsg PRIVATE "${MSGLOADER_DEF}=1")
   if(BUILD_SHARED_LIBS)
     target_compile_definitions(xalanMsg PRIVATE XALAN_XALANMSGLIB_BUILD_DLL=1)
-    # Ensure import library is generated on Windows
-    set_target_properties(xalanMsg PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
   endif()
   target_include_directories(xalanMsg PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>

@@ -16,11 +16,11 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - name: "Windows MSVC 2019 - Release - Shared"
+          - name: "Windows MSVC 2019 - Release - Static"
             generator: "Visual Studio 16 2019"
             arch: "x64"
             config: Release
-            shared: ON
+            shared: OFF
 
           - name: "Windows MSVC 2019 - Debug - Static"
             generator: "Visual Studio 16 2019"

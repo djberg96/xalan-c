@@ -1017,10 +1017,6 @@ if(MSVC)
   set_target_properties(xalan-c PROPERTIES OUTPUT_NAME "Xalan-C_${XALAN_MS_LIB_MAJOR_VER}")
   set_target_properties(xalan-c PROPERTIES RUNTIME_OUTPUT_NAME "Xalan-C_${XALAN_MS_LIB_MAJOR_VER}_${XALAN_MS_LIB_MINOR_VER}")
   set_target_properties(xalan-c PROPERTIES DEBUG_POSTFIX "D")
-  # Ensure import library is generated on Windows for shared builds
-  if(BUILD_SHARED_LIBS)
-    set_target_properties(xalan-c PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
-  endif()
 else()
   # Not used for the common cases, though this would be the default if
   # not for libtool compatibility.
