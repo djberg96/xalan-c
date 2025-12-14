@@ -62,12 +62,6 @@ jobs:
         cmake --build . --config ${{ matrix.config.config }} --parallel
       shell: pwsh
 
-    - name: Install
-      run: |
-        cd build
-        cmake --build . --config ${{ matrix.config.config }} --target install
-      shell: pwsh
-
     - name: Test
       run: |
         cd build
@@ -77,8 +71,8 @@ jobs:
     - name: Package
       if: matrix.config.config == 'Release'
       run: |
-        cd "C:/Program Files (x86)/xalan-c"
-        7z a ${{ github.workspace }}/xalan-c-${{ matrix.config.arch }}.zip *
+        cd build
+        cpack -G ZIP -C ${{ matrix.config.config }}
       shell: pwsh
 
     - name: Upload Artifacts
@@ -86,4 +80,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: xalan-c-windows-${{ matrix.config.arch }}-${{ matrix.config.config }}
-        path: xalan-c-${{ matrix.config.arch }}.zip
+        path: build/*.zip
