@@ -25,17 +25,20 @@
 
 
 
+#include <xalanc/XalanDOM/XalanDOMString.hpp>
+
+
+
 // Base class header file.
 #include <xalanc/XPath/XObject.hpp>
+
+
+
 #include <xalanc/XPath/XObjectResultTreeFragProxy.hpp>
 
 
 
 namespace XALAN_CPP_NAMESPACE {
-
-
-
-class XPathEnvSupport;
 
 
 
@@ -46,31 +49,23 @@ public:
     typedef XObject     ParentType;
 
     /**
-     * Construct an XStringBase object.
+     * Construct a string XObject from a string
      * 
-     * @param theMemoryManager The MemoryManager instance.
+     * @param memoryManager The MemoryManager instance to use.
      */
-    XStringBase(MemoryManager&  theMemoryManager);
+    XStringBase(MemoryManager&  theManager);
 
     /**
-     * Construct an XStringBase object.
+     * Construct a string XObject from another string
      * 
-     * @param theMemoryManager The MemoryManager instance.
-     * @param theExecutionContext The current XPathExecutionContext.
+     * @param theString source string
+     * @param memoryManager The MemoryManager instance to use.
      */
     XStringBase(
-            MemoryManager&          theMemoryManager,
-            XPathExecutionContext&  theExecutionContext);
+            const XalanDOMString&   theString,
+            MemoryManager&          theManager);
 
-    /**
-     * Construct an XStringBase object from another.
-     * 
-     * @param source The source XStringBase instance.
-     * @param theMemoryManager The MemoryManager instance.
-     */
-    XStringBase(
-            const XStringBase&  source,
-            MemoryManager&      theMemoryManager);
+    XStringBase(const XStringBase&  source);
 
     virtual
     ~XStringBase();
@@ -78,46 +73,42 @@ public:
 
     // These methods are inherited from XObject ...
 
-    virtual const XalanDOMString&
-    getTypeString() const;
-  
     virtual double
     num(XPathExecutionContext&  executionContext) const;
 
-    using ParentType::num;
+    virtual double
+    num() const;
 
     virtual bool
     boolean(XPathExecutionContext&  executionContext) const;
 
-    using ParentType::str;
+    virtual const XalanDOMString&
+    str(XPathExecutionContext&  executionContext) const;
 
     virtual const XalanDOMString&
-    str(XPathExecutionContext&  executionContext) const = 0;
-
-    virtual const XalanDOMString&
-    str() const = 0;
+    str() const;
 
     virtual void
     str(
             XPathExecutionContext&  executionContext,
             FormatterListener&      formatterListener,
-            MemberFunctionPtr       function) const = 0;
+            MemberFunctionPtr       function) const;
 
     virtual void
     str(
             FormatterListener&      formatterListener,
-            MemberFunctionPtr       function) const = 0;
+            MemberFunctionPtr       function) const;
 
     virtual void
     str(
             XPathExecutionContext&  executionContext,
-            XalanDOMString&         theBuffer) const = 0;
+            XalanDOMString&         theBuffer) const;
 
     virtual void
-    str(XalanDOMString&     theBuffer) const = 0;
+    str(XalanDOMString&     theBuffer) const;
 
     virtual double
-    stringLength(XPathExecutionContext&     executionContext) const = 0;
+    stringLength(XPathExecutionContext&     executionContext) const;
 
     virtual const XalanDocumentFragment&
     rtree() const;
@@ -127,6 +118,12 @@ public:
 
     virtual void
     ProcessXObjectTypeCallback(XObjectTypeCallback&     theCallbackObject) const;
+
+protected:
+
+    mutable XalanDOMString              m_cachedStringValue;
+
+    mutable XObjectResultTreeFragProxy  m_resultTreeFrag;
 
 private:
 
@@ -138,6 +135,7 @@ private:
     XStringBase();
 
     mutable double                      m_cachedNumberValue;
+    mutable bool                        m_cachedNumberValid;
 
     mutable XObjectResultTreeFragProxy  m_resultTreeFrag;
 };
