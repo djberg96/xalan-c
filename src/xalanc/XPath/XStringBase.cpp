@@ -154,6 +154,10 @@ XStringBase::str() const
                 theBuffer);
 }
 
-
+void
+XStringBase::ClearCachedNumber()
+{
+    m_cachedNumberValue = 0.0;
+}
 
 }
