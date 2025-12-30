@@ -42,6 +42,7 @@ namespace XALAN_CPP_NAMESPACE {
 XStringBase::XStringBase(MemoryManager&  theMemoryManager) :
     XObject(eTypeString, theMemoryManager),
     m_cachedNumberValue(0.0),
+    m_cachedNumberValid(false),
     m_resultTreeFrag(*this, theMemoryManager, 0)
 {
 }
@@ -53,6 +54,7 @@ XStringBase::XStringBase(
             XPathExecutionContext&  theExecutionContext) :
     XObject(eTypeString, theMemoryManager),
     m_cachedNumberValue(0.0),
+    m_cachedNumberValid(false),
     m_resultTreeFrag(*this, theMemoryManager, &theExecutionContext)
 {
 }
@@ -64,6 +66,7 @@ XStringBase::XStringBase(
             MemoryManager&      theMemoryManager) :
     XObject(source, theMemoryManager),
     m_cachedNumberValue(source.m_cachedNumberValue),
+    m_cachedNumberValid(source.m_cachedNumberValid),
     m_resultTreeFrag(
         *this,
         theMemoryManager,
@@ -90,12 +93,13 @@ XStringBase::getTypeString() const
 double
 XStringBase::num(XPathExecutionContext&     executionContext) const
 {
-    if (m_cachedNumberValue == 0.0)
+    if (!m_cachedNumberValid)
     {
         m_cachedNumberValue =
             DoubleSupport::toDouble(
                 str(executionContext),
                 getMemoryManager());
+        m_cachedNumberValid = true;
     }
 
     return m_cachedNumberValue;
@@ -157,7 +161,7 @@ XStringBase::str() const
 void
 XStringBase::ClearCachedNumber()
 {
-    m_cachedNumberValue = 0.0;
+    m_cachedNumberValid = false;
 }
 
 }
